@@ -5,6 +5,9 @@ export default function useLocalStorage<T>(
   defaultValue: T
 ): [T, (value: T) => void] {
   const [value, setValue] = useState<T>(() => {
+    if (typeof window === "undefined") {
+      return defaultValue;
+    }
     const item = localStorage.getItem(key);
     if (item !== null) {
       try {

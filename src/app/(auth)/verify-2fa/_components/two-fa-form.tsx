@@ -42,7 +42,7 @@ const TwoFAForm = () => {
 
   const onSubmit = async (data: Verify2FASchema) => {
     const res = await verify2FA(data);
-    console.log("🚀 ~ onSubmit ~ res:", res);
+    // console.log("🚀 ~ onSubmit ~ res:", res);
 
     if (res?.error) {
       form.setError("root", {
@@ -64,7 +64,7 @@ const TwoFAForm = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 flex justify-center flex-col max-w-sm w-full mx-auto"
+        className="space-y-12 flex justify-center flex-col max-w-sm mx-auto"
       >
         <FormField
           control={form.control}
@@ -95,7 +95,9 @@ const TwoFAForm = () => {
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="">
+          Submit
+        </Button>
       </form>
     </Form>
   );

@@ -61,8 +61,11 @@ const LoginForm = () => {
 
   const router = useRouter();
   const onSubmit = async (data: LoginUserSchema) => {
+    if (rememberMe) {
+      setUserId(data.email);
+    }
     const res = await loginUser(data);
-    console.log("🚀 ~ onSubmit ~ res:", res);
+    // console.log("🚀 ~ onSubmit ~ res:", res);
 
     if (res?.error) {
       setInValidCredentials(true);

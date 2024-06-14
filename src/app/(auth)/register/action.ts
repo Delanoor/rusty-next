@@ -8,6 +8,7 @@ import type {
 } from "@/types/auth";
 import axios, { type AxiosError } from "axios";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function createUser(
   data: RegisterUserSchema
@@ -32,9 +33,22 @@ export async function loginUser(
 ): Promise<CreateUserResponse> {
   try {
     const response = await axios.post("http://localhost:3000/login", data);
+    console.log("🚀 ~ response:", response);
 
-    if (response.data.loginAttemptId) {
+    if (response.status === 206 && response.data.loginAttemptId) {
       cookies().set("loginAttemptId", response.data.loginAttemptId);
+    } else if (response.status === 200) {
+      const setCookieHeader = response.headers["set-cookie"];
+      if (setCookieHeader) {
+        const cookieString = setCookieHeader[0];
+        const cookieParts = cookieString.split(";")[0].split("=");
+        cookies().set(cookieParts[0], cookieParts[1], {
+          httpOnly: true,
+          sameSite: "lax",
+          path: "/",
+        });
+      }
+      redirect("/protected");
     }
 
     return response.data;
@@ -56,7 +70,7 @@ export async function verify2FA(data: Verify2FASchema) {
     const loginAttemptId = cookies().get("loginAttemptId")?.value ?? "";
     const body = { ...data, loginAttemptId };
     const response = await axios.post("http://localhost:3000/verify-2fa", body);
-    console.log("🚀 ~ verify2FA ~ response:", response);
+    // console.log("🚀 ~ verify2FA ~ response:", response);
 
     const setCookieHeader = response.headers["set-cookie"];
     if (setCookieHeader) {
