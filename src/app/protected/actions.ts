@@ -2,6 +2,7 @@
 import axios from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://auth-service:3000";
 
 export async function verifyUser() {
   const token = cookies().get("jwt")?.value;
@@ -10,7 +11,7 @@ export async function verifyUser() {
 
   try {
     await axios
-      .post("http://localhost:3000/verify-token", body, {
+      .post(`${API_URL}/verify-token`, body, {
         headers: {
           "Content-Type": "application/json",
         },

@@ -1,7 +1,9 @@
 import { Suspense } from "react";
 
-import LoginForm from "../_components/login-form";
 import FerrisSvg from "@/images/ferris-svg";
+import dynamic from "next/dynamic";
+
+const LoginForm = dynamic(() => import("../_components/login-form"), {});
 
 export default function LoginPage() {
   return (

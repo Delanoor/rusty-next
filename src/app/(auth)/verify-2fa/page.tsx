@@ -1,9 +1,12 @@
 import { Suspense } from "react";
 
-import TwoFAForm from "./_components/two-fa-form";
-
 import FerrisGestureSvg from "@/images/ferris-gesture";
+import dynamic from "next/dynamic";
 
+const TwoFAForm = dynamic(
+  () => import("@/app/(auth)/verify-2fa/_components/two-fa-form"),
+  {}
+);
 export default function RegisterPage() {
   return (
     <div className="container relative grid h-screen flex-col bg-background items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">

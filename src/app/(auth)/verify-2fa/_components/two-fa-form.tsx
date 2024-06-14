@@ -19,8 +19,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { verify2FASchema, type Verify2FASchema } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cookies } from "next/headers";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { verify2FA } from "../../register/action";
 
