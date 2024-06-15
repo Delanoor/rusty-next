@@ -1,5 +1,6 @@
 "use server";
 
+import { toast } from "@/components/ui/use-toast";
 import type {
   CreateUserResponse,
   LoginUserSchema,
@@ -10,15 +11,16 @@ import axios, { type AxiosError } from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://auth-service:3000";
-console.log("🚀 ~ NEXT_PUBLIC_API_URL:", API_URL);
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function createUser(
   data: RegisterUserSchema
 ): Promise<CreateUserResponse> {
   try {
-    const response = await axios.post(`${API_URL}/signup`, data);
-    console.log("🚀 ~ createUser ~ response:", response);
+    const response = await axios.post(`${API_URL}/signup`, data, {
+      withCredentials: true,
+    });
+
     return response.data;
   } catch (err) {
     if (axios.isAxiosError(err)) {
@@ -35,9 +37,12 @@ export async function loginUser(
   data: LoginUserSchema
 ): Promise<CreateUserResponse> {
   try {
-    const response = await axios.post(`${API_URL}/login`, data);
-    console.log("🚀 ~ response:", response);
+    const response = await axios.post(`${API_URL}/login`, data, {
+      withCredentials: true,
+    });
+    // console.log("🚀 ~ response:", response);
 
+    // 2FA required
     if (response.status === 206 && response.data.loginAttemptId) {
       cookies().set("loginAttemptId", response.data.loginAttemptId);
     } else if (response.status === 200) {
@@ -51,6 +56,7 @@ export async function loginUser(
           path: "/",
         });
       }
+
       redirect("/protected");
     }
 
@@ -72,7 +78,9 @@ export async function verify2FA(data: Verify2FASchema) {
   try {
     const loginAttemptId = cookies().get("loginAttemptId")?.value ?? "";
     const body = { ...data, loginAttemptId };
-    const response = await axios.post(`${API_URL}/verify-2fa`, body);
+    const response = await axios.post(`${API_URL}/verify-2fa`, body, {
+      withCredentials: true,
+    });
     // console.log("🚀 ~ verify2FA ~ response:", response);
 
     const setCookieHeader = response.headers["set-cookie"];
@@ -97,6 +105,6 @@ export async function verify2FA(data: Verify2FASchema) {
         axiosError.response?.data || { error: "An unknown error occurred" }
       );
     }
-    throw err; // Rethrow any non-Axios errors
+    throw err;
   }
 }

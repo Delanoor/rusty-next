@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ import useLocalStorage from "@/lib/hooks/use-local-storage";
 
 import { loginUserSchema, type LoginUserSchema } from "@/types/auth";
 import { loginUser } from "../register/action";
+import { toast } from "@/components/ui/use-toast";
 
 const LoginForm = () => {
   const callbackUrl = useSearchParams().get("callbackUrl");
@@ -59,29 +60,40 @@ const LoginForm = () => {
     }
   }, []);
 
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const onSubmit = async (data: LoginUserSchema) => {
     if (rememberMe) {
       setUserId(data.email);
     }
-    const res = await loginUser(data);
-    // console.log("🚀 ~ onSubmit ~ res:", res);
+    startTransition(async () => {
+      const res = await loginUser(data);
+      // console.log("🚀 ~ onSubmit ~ res:", res);
 
-    if (res?.error) {
-      setInValidCredentials(true);
-      form.setError("root", {
-        type: "manual",
-        message: res.error,
-      });
-      form.reset();
-      return;
-    }
+      if (res?.error) {
+        setInValidCredentials(true);
+        form.setError("root", {
+          type: "manual",
+          message: res.error,
+        });
+        form.reset();
+        return;
+      }
 
-    if (res?.message === "2FA required") {
-      router.push(`/verify-2fa?email=${data.email}`);
+      if (res?.message === "2FA required") {
+        toast({
+          title: "Success",
+          description: (
+            <span>
+              you have successfully logged in. Please verify your 2FA code.
+            </span>
+          ),
+        });
+        router.push(`/verify-2fa?email=${data.email}`);
 
-      return;
-    }
+        return;
+      }
+    });
   };
 
   const {
@@ -112,6 +124,7 @@ const LoginForm = () => {
             <div className="space-y-6">
               <div>
                 <FormField
+                  disabled={isPending}
                   control={form.control}
                   name="email"
                   render={({ field }) => (
@@ -132,6 +145,7 @@ const LoginForm = () => {
               </div>
               <div>
                 <FormField
+                  disabled={isPending}
                   control={form.control}
                   name="password"
                   render={({ field }) => (
@@ -157,7 +171,7 @@ const LoginForm = () => {
                 <Checkbox
                   id="remember-me"
                   name="remember-me"
-                  className="h-4 w-4 rounded border-gray-300 text-sky-600 focus:ring-sky-600"
+                  className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-600"
                   checked={rememberMe}
                   onCheckedChange={(checked) => {
                     setRememberMe(checked as boolean);
@@ -175,7 +189,7 @@ const LoginForm = () => {
               <div className="text-sm leading-6">
                 <button
                   disabled
-                  className="font-semibold text-sky-600 hover:text-sky-500 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="font-semibold text-orange-600 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Forgot password?
                 </button>
@@ -183,11 +197,11 @@ const LoginForm = () => {
             </div>
             <div className="w-full">
               <Button
-                disabled={!isValid || isSubmitting}
+                disabled={!isValid || isSubmitting || isPending}
                 type="submit"
                 className="inline-flex w-full"
               >
-                {isSubmitting ? (
+                {isSubmitting || isPending ? (
                   <>
                     <IconSpinner className="animate-spin mr-2" />
                     Signing in...
@@ -211,12 +225,11 @@ const LoginForm = () => {
 
             <div className="relative flex justify-center text-sm font-medium leading-6">
               <p>
-                Don&apos;t have an account
+                Don&apos;t have an account?{" "}
                 <Link
-                  className="text-sky-600 hover:text-sky-500 disabled:cursor-not-allowed"
+                  className="text-orange-600 hover:text-orange-500 disabled:cursor-not-allowed"
                   href={"/register"}
                 >
-                  {" "}
                   Signup now
                 </Link>
               </p>

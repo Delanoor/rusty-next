@@ -22,8 +22,8 @@ import { Input } from "@/components/ui/input";
 import { createUser } from "../action";
 import { Checkbox } from "@/components/ui/checkbox";
 import { registerUserSchema, type RegisterUserSchema } from "@/types/auth";
-import Link from "next/link";
-import axios from "axios";
+
+import { toast } from "@/components/ui/use-toast";
 
 const RegisterForm = () => {
   const callbackUrl = useSearchParams().get("callbackUrl");
@@ -66,6 +66,10 @@ const RegisterForm = () => {
       return;
     }
 
+    toast({
+      title: "Success",
+      description: <span>successfully registered</span>,
+    });
     router.push(`/login`);
   };
 
