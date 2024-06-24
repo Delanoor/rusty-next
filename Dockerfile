@@ -50,6 +50,7 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
+ARG NEXT_PUBLIC_API_URL=http://auth-service:8000
 ENV PORT 3000
 
 

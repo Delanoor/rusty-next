@@ -7,7 +7,6 @@ on:
       - main
 
 env:
-  BASE_PATH: ${{ vars.BASE_PATH }}
   NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
 
 jobs:
@@ -56,28 +55,16 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
-    env:
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-
     steps:
       - name: Install sshpass
         run: sudo apt-get install sshpass
 
-      - name: Copy docker-compose.yml to droplet
-        run: sshpass -v -p ${{ secrets.DROPLET_PASSWORD }} scp -o StrictHostKeyChecking=no docker-compose.yml root@${{ vars.DROPLET_IP }}:~
-
-      - name: Copy nginx-setup.conf
-        run: sshpass -v -p ${{ secrets.DROPLET_PASSWORD }} scp -o StrictHostKeyChecking=no nginx/local_templates.default.conf.template root@${{ vars.DROPLET_IP }}:/etc/nginx/templates/
-
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ vars.DROPLET_IP }}
-          envs: BASE_PATH, JWT_SECRET, DROPLET_IP, POSTGRES_PASSWORD
-
-          username: root
-          password: ${{ secrets.DROPLET_PASSWORD }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~
 
