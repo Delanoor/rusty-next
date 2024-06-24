@@ -1,5 +1,6 @@
 "use server";
 
+import { API_URL } from "@/app/constants";
 import { toast } from "@/components/ui/use-toast";
 import type {
   CreateUserResponse,
@@ -10,8 +11,6 @@ import type {
 import axios, { type AxiosError } from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function createUser(
   data: RegisterUserSchema
@@ -101,10 +100,8 @@ export async function verify2FA(data: Verify2FASchema) {
       const axiosError = err;
       console.log("🚀 ~ axiosError:", err);
 
-      return (
-        axiosError.response?.data || { error: "An unknown error occurred" }
-      );
+      return axiosError || { error: "An unknown error occurred" };
     }
-    throw err;
+    return err;
   }
 }

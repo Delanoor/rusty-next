@@ -57,8 +57,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DROPLET_IP: ${{ vars.DROPLET_IP }}
-      BASE_PATH: ${{ vars.BASE_PATH }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 

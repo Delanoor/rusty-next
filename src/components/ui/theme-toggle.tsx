@@ -21,7 +21,7 @@ export default function ThemeToggle({ className }: ThemeToggleProps) {
         setTheme(theme === "light" ? "dark" : "light");
       }}
     >
-      {!theme ? null : theme === "dark" ? (
+      {theme === "dark" ? (
         <IconMoon className="transition-all" />
       ) : (
         <IconSun className="transition-all" />

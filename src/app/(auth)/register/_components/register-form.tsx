@@ -27,7 +27,7 @@ import { toast } from "@/components/ui/use-toast";
 
 const RegisterForm = () => {
   const callbackUrl = useSearchParams().get("callbackUrl");
-  const errorMessage = useSearchParams().get("message");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const [inValidCredentials, setInValidCredentials] = useState(false);
 
@@ -58,6 +58,7 @@ const RegisterForm = () => {
 
     if (res?.error) {
       setInValidCredentials(true);
+      setErrorMessage(res.error);
       form.setError("root", {
         type: "manual",
         message: res.error,

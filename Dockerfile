@@ -49,8 +49,8 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-EXPOSE 8000
-ENV PORT 8000
+EXPOSE 3000
+ENV PORT 3000
 
 
 CMD ["server.js"]

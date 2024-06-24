@@ -1,5 +1,5 @@
 {
-  "name": "app-next",
+  "name": "rusty-next",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -26,6 +26,7 @@
     "next": "14.2.3",
     "next-themes": "^0.3.0",
     "react": "^18",
+    "react-canvas-confetti": "^2.0.7",
     "react-dom": "^18",
     "react-hook-form": "^7.51.5",
     "react-icons": "^5.2.1",

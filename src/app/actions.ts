@@ -9,9 +9,35 @@ import type {
 import axios, { type AxiosError } from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { API_URL } from "./constants";
 axios.defaults.withCredentials = true;
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+export async function getAuthState() {
+  try {
+    const token = cookies().get("jwt")?.value;
+    if (!token) {
+      return { isAuthenticated: false };
+    }
+
+    const body = JSON.stringify({ token });
+
+    const response = await axios.post(`${API_URL}/verify-token`, body, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return { isAuthenticated: response.status === 200 };
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      const axiosError = err as AxiosError<CreateUserResponse>;
+      console.log("🚀 ~ getAuthState ~ axiosError:", axiosError.response?.data);
+
+      return { isAuthenticated: false };
+    }
+    throw err; // Rethrow any non-Axios errors
+  }
+}
 
 export async function signOut() {
   try {

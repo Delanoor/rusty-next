@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import ThemeToggle from "@/components/ui/theme-toggle";
 import { UserDropDownMenu } from "./user-drop-down-menu";
+import { Suspense } from "react";
 // import { getServerAuthSession } from "@/server/auth";
 
 export const HomeNavbar = async () => {
@@ -53,6 +54,7 @@ export const HomeNavbar = async () => {
 
             <div className="flex justify-end whitespace-nowrap items-center space-x-2">
               <ThemeToggle />
+
               <UserDropDownMenu />
             </div>
           </nav>
