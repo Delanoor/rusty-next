@@ -21,7 +21,10 @@ import { verify2FASchema, type Verify2FASchema } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { verify2FA } from "../../register/action";
+import {
+  verify2FA,
+  type Verify2FAResponse,
+} from "@/app/(auth)/register/action";
 
 const TwoFAForm = () => {
   const email = useSearchParams().get("email") ?? "";
@@ -40,10 +43,10 @@ const TwoFAForm = () => {
   const router = useRouter();
 
   const onSubmit = async (data: Verify2FASchema) => {
-    const res = await verify2FA(data);
+    const res: Verify2FAResponse = await verify2FA(data);
     // console.log("🚀 ~ onSubmit ~ res:", res);
 
-    if (res?.error) {
+    if ("error" in res) {
       form.setError("root", {
         type: "manual",
         message: res.error,
@@ -51,6 +54,7 @@ const TwoFAForm = () => {
       form.reset();
       return;
     }
+
     if (res.status === 200) {
       router.push("/protected");
       toast({

@@ -73,18 +73,29 @@ export async function loginUser(
   }
 }
 
-export async function verify2FA(data: Verify2FASchema) {
+export interface Verify2FASuccessResponse {
+  status: number;
+}
+
+export interface Verify2FAErrorResponse {
+  error: string;
+}
+
+export type Verify2FAResponse =
+  | Verify2FASuccessResponse
+  | Verify2FAErrorResponse;
+export async function verify2FA(
+  data: Verify2FASchema
+): Promise<Verify2FAResponse> {
   try {
     const loginAttemptId = cookies().get("loginAttemptId")?.value ?? "";
     const body = { ...data, loginAttemptId };
     const response = await axios.post(`${API_URL}/verify-2fa`, body, {
       withCredentials: true,
     });
-    // console.log("🚀 ~ verify2FA ~ response:", response);
 
     const setCookieHeader = response.headers["set-cookie"];
     if (setCookieHeader) {
-      // Set the cookie server-side
       const cookieString = setCookieHeader[0];
       const cookieParts = cookieString.split(";")[0].split("=");
       cookies().set(cookieParts[0], cookieParts[1], {
@@ -96,12 +107,11 @@ export async function verify2FA(data: Verify2FASchema) {
 
     return { status: response.status };
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      const axiosError = err;
-      console.log("🚀 ~ axiosError:", err);
-
-      return axiosError || { error: "An unknown error occurred" };
+    if (axios.isAxiosError(err) && err.response) {
+      return {
+        error: err.response.data.error || "An unknown error occurred",
+      } as Verify2FAErrorResponse;
     }
-    return err;
+    return { error: "An unknown error occurred" } as Verify2FAErrorResponse;
   }
 }
