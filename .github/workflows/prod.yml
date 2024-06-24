@@ -68,7 +68,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /path/to/your/docker-compose/directory
+            cd ~
             sshpass -e docker compose down
             sshpass -e docker compose pull
             sshpass -e docker compose up -d
