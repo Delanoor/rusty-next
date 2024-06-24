@@ -54,5 +54,5 @@ ARG NEXT_PUBLIC_API_URL=http://auth-service:8000
 ENV PORT 3000
 
 
-CMD ["node", "server.js"]
+CMD ["server.js"]
 
