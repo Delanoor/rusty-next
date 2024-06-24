@@ -35,7 +35,7 @@ RUN \
 
 ##### RUNNER
 
-FROM gcr.io/distroless/nodejs20-debian12 AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -54,5 +54,5 @@ ARG NEXT_PUBLIC_API_URL=http://auth-service:8000
 ENV PORT 3000
 
 
-CMD ["server.js"]
+CMD ["node", "server.js"]
 
