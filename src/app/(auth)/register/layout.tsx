@@ -1,11 +1,11 @@
-import Link from "next/link";
+import Link from 'next/link'
 
-import { ReactNode } from "react";
+import { ReactNode } from 'react'
 
 export default async function LoginLayout({
   children,
 }: {
-  children: ReactNode;
+  children: ReactNode
 }) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-dark">
@@ -20,10 +20,8 @@ export default async function LoginLayout({
               </div>
             </Link>
           </div>
-
-          {/* <ThemeToggle className="" /> */}
         </div>
       </div>
     </div>
-  );
+  )
 }
