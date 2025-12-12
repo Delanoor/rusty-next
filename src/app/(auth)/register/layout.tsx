@@ -10,7 +10,6 @@ export default async function LoginLayout({
   return (
     <div className="flex items-center justify-center min-h-screen bg-dark">
       {children}
-
       <div className="fixed inset-x-0 bottom-0 bg-background">
         <div className="flex sm:inline-flex sm:space-x-4 w-full items-center justify-center border-t">
           <div className="flex">
